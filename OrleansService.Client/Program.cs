@@ -37,7 +37,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 
-app.MapGet("/InvokeOrleansService", async (IClusterClient orleansClient , Guid grainId) =>
+app.MapGet("/InvokeOrleansService", async (IGrainFactory orleansClient , Guid grainId) =>
     {
        var client= orleansClient.GetGrain<IMessagingService>(grainId);
 
@@ -49,7 +49,7 @@ app.MapGet("/InvokeOrleansService", async (IClusterClient orleansClient , Guid g
 .WithOpenApi();
 
 
-app.MapGet("/InvokeOrleansServiceAutoGrain", async (IClusterClient orleansClient) =>
+app.MapGet("/InvokeOrleansServiceAutoGrain", async (IGrainFactory orleansClient) =>
     {
         var client = orleansClient.GetGrain<IMessagingService>(Guid.NewGuid());
 
@@ -60,7 +60,7 @@ app.MapGet("/InvokeOrleansServiceAutoGrain", async (IClusterClient orleansClient
     .WithName("InvokeOrleansServiceAutoGrain")
     .WithOpenApi();
 
-app.MapGet("/GrainInfo", async (IClusterClient orleansClient, Guid grainId) =>
+app.MapGet("/GrainInfo", async (IGrainFactory orleansClient, Guid grainId) =>
     {
         var client = orleansClient.GetGrain<IMessagingService>(grainId);
 
