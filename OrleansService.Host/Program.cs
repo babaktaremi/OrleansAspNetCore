@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Net;
 using Grains;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Orleans;
 using Orleans.Configuration;
 using Orleans.Hosting;
@@ -63,6 +64,16 @@ app.UseHttpsRedirection();
 
 app.MapGet("/", () => "Orleans Server Is Running!");
 
+await ConfigureMigrationsAsync();
+
+ async Task ConfigureMigrationsAsync()
+{
+    using var serviceScope = app.Services.CreateScope();
+
+    var messagingDb = serviceScope.ServiceProvider.GetRequiredService<MessagingDbContext>();
+
+    await messagingDb.Database.MigrateAsync();
+}
 
 app.Run();
 
