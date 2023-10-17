@@ -1,0 +1,59 @@
+﻿@page "/"
+@using Microsoft.AspNetCore.SignalR.Client
+@implements IAsyncDisposable
+<PageTitle>Index</PageTitle>
+
+@if (!_messages.Any())
+{
+    <p><em>No Messages Yet...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Message</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var message in _messages)
+        {
+            <tr>
+              <td>@message</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+
+@code
+{
+    private HubConnection? _hubConnection;
+    private List<string> _messages = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _hubConnection = new HubConnectionBuilder()
+            .WithAutomaticReconnect()
+            .WithUrl("https://localhost:7297/NotificationHub")
+            .Build();
+
+        _hubConnection.On("PublishMessageToHub", async (string message) => await LogMessage(message));
+
+        await _hubConnection.StartAsync();
+
+        await base.OnInitializedAsync();
+    }
+
+    private async Task LogMessage(string message)
+    {
+       _messages.Add(message);
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_hubConnection != null) await _hubConnection.DisposeAsync();
+    }
+}

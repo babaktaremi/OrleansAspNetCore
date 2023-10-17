@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrleansService.Client", "Or
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrleansService.SiloHost", "OrleansService.Host\OrleansService.SiloHost.csproj", "{970C922F-5CAE-449D-A6A3-D88CEB610CCA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrleansService.BlazorDashboard", "OrleansService.BlazorDashboard\OrleansService.BlazorDashboard.csproj", "{87CACBDE-C10E-403D-BBEF-6FE662B5BEE0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{970C922F-5CAE-449D-A6A3-D88CEB610CCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{970C922F-5CAE-449D-A6A3-D88CEB610CCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{970C922F-5CAE-449D-A6A3-D88CEB610CCA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87CACBDE-C10E-403D-BBEF-6FE662B5BEE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87CACBDE-C10E-403D-BBEF-6FE662B5BEE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87CACBDE-C10E-403D-BBEF-6FE662B5BEE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87CACBDE-C10E-403D-BBEF-6FE662B5BEE0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

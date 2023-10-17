@@ -1,5 +1,7 @@
 using Grains.Interfaces;
+using Microsoft.AspNetCore.SignalR;
 using Orleans.Configuration;
+using OrleansService.Client.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +9,22 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policyBuilder =>
+    {
+        policyBuilder.AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowAnyOrigin();
+    });
+});
+
+builder.Services.AddSignalR(options =>
+{
+    options.EnableDetailedErrors = true;
+    options.KeepAliveInterval = TimeSpan.FromSeconds(5);
+});
 
 builder.Host.UseOrleansClient(clientBuilder =>
 {
@@ -34,7 +52,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("AllowAll");
 app.UseHttpsRedirection();
+
 
 
 app.MapGet("/InvokeOrleansService", async (IGrainFactory orleansClient , Guid grainId) =>
@@ -49,16 +69,20 @@ app.MapGet("/InvokeOrleansService", async (IGrainFactory orleansClient , Guid gr
 .WithOpenApi();
 
 
-app.MapGet("/InvokeOrleansServiceAutoGrain", async (IGrainFactory orleansClient) =>
+app.MapGet("/InvokeOrleansServiceAutoGrain", async (IGrainFactory orleansClient
+    ,IHubContext<NotificationHub,INotificationHub> hub) =>
     {
         var client = orleansClient.GetGrain<IMessagingService>(Guid.NewGuid());
 
         var response = await client.InvokeMessage($"Message Invoked At {DateTime.Now}");
 
+        await hub.Clients.All.PublishMessageToHub(response);
+
         return Results.Ok(response);
     })
     .WithName("InvokeOrleansServiceAutoGrain")
-    .WithOpenApi();
+    .WithOpenApi()
+    ;
 
 app.MapGet("/GrainInfo", async (IGrainFactory orleansClient, Guid grainId) =>
     {
@@ -74,6 +98,8 @@ app.MapGet("/GrainInfo", async (IGrainFactory orleansClient, Guid grainId) =>
     })
     .WithName("GetGrainInfo")
     .WithOpenApi();
+
+app.MapHub<NotificationHub>("/NotificationHub");
 
 app.Run();
 

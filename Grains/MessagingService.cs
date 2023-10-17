@@ -10,6 +10,7 @@ namespace Grains
         readonly MessagingDbContext _dbContext;
         private DateTime _creationDate;
         private Guid _grainId;
+        private readonly IGrainFactory _grainFactory;
 
         public override Task OnActivateAsync(CancellationToken cancellationToken)
         {
@@ -19,10 +20,11 @@ namespace Grains
             return base.OnActivateAsync(cancellationToken);
         }
 
-        public MessagingService(ILogger<MessagingService> logger, MessagingDbContext dbContext)
+        public MessagingService(ILogger<MessagingService> logger, MessagingDbContext dbContext, IGrainFactory grainFactory)
         {
             _logger = logger;
             _dbContext = dbContext;
+            _grainFactory = grainFactory;
         }
 
         public async Task<string> InvokeMessage(string message)
@@ -38,7 +40,13 @@ namespace Grains
             await _dbContext.SaveChangesAsync();
 
             _logger.LogWarning("Message Received. Message Content => {message}",message);
-            return $"Message invocation complete. Stored Message Id: {messageModel.Id} With Grain Id : {this.GetPrimaryKey()}";
+
+            var notification =
+                $"Message invocation complete. Stored Message Id: {messageModel.Id} With Grain Id : {this.GetPrimaryKey()}";
+
+
+
+            return notification;
         }
 
         public Task<GrainInfoModel> GetGrainInfo()=>Task.FromResult(new GrainInfoModel(_creationDate,_grainId));

@@ -13,6 +13,9 @@ public static class GrainsServiceConfigurationExtensions
         {
             options.UseSqlServer(configuration.GetConnectionString("MessagingDb"));
         });
+
+
+
         return services;
     }
 }
