@@ -21,7 +21,17 @@ builder.Services.AddGrains(builder.Configuration);
 
 builder.Host.UseOrleans(async (context, siloBuilder) =>
 {
+    siloBuilder.AddAdoNetGrainStorageAsDefault(options =>
+    {
+        options.ConnectionString = context.Configuration.GetConnectionString("GrainsDb");
+        options.Invariant = "System.Data.SqlClient";
+    });
 
+    //siloBuilder.AddAdoNetGrainStorage("SqlGrainStorage", options =>
+    //{
+    //    options.ConnectionString = context.Configuration.GetConnectionString("GrainsDb");
+    //    options.Invariant = "System.Data.SqlClient";
+    //});
 
     siloBuilder
         .UseAdoNetClustering(options =>
